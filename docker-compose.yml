@@ -1,0 +1,17 @@
+version: "3"
+services:
+  slack-alert:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MODULE_NAME: weeve-email
+      MODULE_TYPE: EGRESS
+      EGRESS_URL: https://hookb.in/OekpN3YnVKTqOdYYxb22
+      INPUT_LABEL: "temperature"
+      INPUT_UNIT: "Celsius"
+      ALERT_SEVERITY: "warning"
+      ALERT_MESSAGE: "Data point {{label}} reached the value of {{value}} {{unit}} at {{time}}!"
+      SLACK_WEBHOOK_URL: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+    ports:
+      - 5000:80

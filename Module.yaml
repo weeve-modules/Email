@@ -1,0 +1,61 @@
+version: 1.0.0
+name: Slack Alert
+description: Sending alerts and notifications to Slack Channels
+icon: https://icons-020-demo.s3.eu-central-1.amazonaws.com/mi_slack-alert_output.png
+type: output
+tags:
+  - Slack Alert
+  - output
+  - notifications
+  - alerts
+categories:
+  - id: category
+    name: Alert
+image:
+  name: weevenetwork/weeve-slack-alert
+  tag: latest
+environments:
+  - key: INPUT_LABEL
+    description: The field to apply alert on
+    value: ""
+    default: temperature
+    type: string
+    name: Input Label
+  - key: INPUT_UNIT
+    description: The input unit
+    value: ""
+    default: Celsius
+    type: string
+    name: Input Unit
+  - key: ALERT_SEVERITY
+    description: Order of the results
+    value: ""
+    default: Warning
+    type: enum
+    options:
+      - Warning
+      - Alarming
+      - Caution
+      - Broken
+    name: Alert Severity
+  - key: ALERT_MESSAGE
+    description: Write custom alert message as per requirements. Use the described format to get the required field in the alert {{label}} for Input label,{{value}} for data of device, {{unit}} for Input Unit, {{alert_severity}}, {{device_name}} and {{time}} for time-stamp
+    value: ""
+    default: Data point {{label}} reached the value of {{value}} {{unit}} at {{time}}!
+    type: string
+    name: Alert Message
+  - key: SLACK_WEBHOOK_URL
+    description: Webhook to the slack channel to put alerts on
+    value: ""
+    default: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+    type: string
+    name: Slack Webhook URL
+commands: []
+document:
+  ports: []
+  volumes: []
+  restart_policy:
+    condition: on-failure
+    delay: 10s
+    max_attempts: 3
+    window: 120s
