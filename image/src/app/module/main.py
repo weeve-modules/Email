@@ -36,21 +36,23 @@ def module_main(data,log):
 
     now = time.localtime()
     current_time = time.strftime("%H:%M:%S", now)
-
     try:
-        print("inside try")
         parsed_data = data[__INPUT_LABEL__]
         device_name = socket.gethostname()
         with open('client_secret.json','w') as fd :
-            fd.write(json.dumps(APPLICATION['AUTH_TOKEN']))
+            fd.write(APPLICATION['AUTH_TOKEN'])
+        log.info("file created" )
         with open('client_secret.json','r') as fd :
-            print(fd.readlines())
+            log.info(fd.readlines())
         CLIENT_SECRET_FILE = 'client_secret.json'
         API_NAME = 'gmail'
         API_VERSION = 'v1'
         SCOPES = ['https://mail.google.com/']
-        service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+        log.info("before service")
+        service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES, log=log)
+        log.info("1st point")
         file_attachment = [r'__ATTACHMENT_FILE_PATH__']
+        log.info("2nd point")
  
 
        # This is a way to format the data in a way that Slack can understand.
@@ -66,6 +68,7 @@ def module_main(data,log):
             email_message = email_message.replace(key, value)
 
         email_body = json.dumps({'text': email_message})
+        log.info(email_body)
 
         #create email subject and body
         emailMsg = email_body
@@ -81,7 +84,7 @@ def module_main(data,log):
             file_name = os.path.normpath(attachment)
 
         f = open(attachment,'rb')
-
+        log.info("checkpoint3")
         myFile = MIMEBase(main_type,sub_type)
         myFile.set_payload(f.read())
         myFile.add_header('Content-Disposition', 'attachment', filename=file_name)
@@ -90,14 +93,15 @@ def module_main(data,log):
         f.close()
  
         mimeMessage.attach(myFile)
+        log.info("checkpoint4")
 
         raw_string = base64.urlsafe_b64encode(mimeMessage.as_bytes()).decode()
-
+        log.info("checkpoint5")
         message = service.users().messages().send(
         userId='me',
         body={'raw': raw_string}).execute()
 
-        print(message)
+        log.info(message)
 
-    except Exception:
-        return None, "Unable to perform the module logic"
+    except Exception as e:
+        return None, f"Unable to perform the module logic {e}" 
